@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "504366534228",
+    "firebase_url": "https://publicsurvey-747ec.firebaseio.com",
+    "project_id": "publicsurvey-747ec",
+    "storage_bucket": "publicsurvey-747ec.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:504366534228:android:08b735c3b8557e0f0d27c1",
+        "android_client_info": {
+          "package_name": "com.example.ps"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "504366534228-bubkc0cp5rpl5unbgpl75bh127rhalqd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDjDaKgZBG2k7mlKZjF4zkQLMh5JY0grJs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "504366534228-bubkc0cp5rpl5unbgpl75bh127rhalqd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
