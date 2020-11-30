@@ -41,6 +41,7 @@ class SurveyCreation : AppCompatActivity() {
                 db.collection("surveys")
                     .add(survey)
 
+
                 val intent = Intent(this, SurveyDashboard::class.java)
                 setResult(Activity.RESULT_OK, intent)
                 finish()

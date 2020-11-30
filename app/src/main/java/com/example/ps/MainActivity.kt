@@ -69,6 +69,10 @@ class MainActivity : AppCompatActivity() {
                                 //start intent to do survey
                                 //this means a survey was found corresponding to the code
                                 //just need to add it as an extra to the intent and start an activity that involves completing the survey
+                                val intent = Intent(this,Survey::class.java)
+                                val lst =  document.data.get("question") as Array<String>
+                                intent.putExtra("questions", lst)
+                                startActivity(intent)
                             }
                         }
                         if (!found) {
