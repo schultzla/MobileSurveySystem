@@ -41,8 +41,6 @@ class MainActivity : AppCompatActivity() {
             code = findViewById<EditText>(R.id.code)
             accountInstructions = findViewById(R.id.accountInstructions)
 
-            //code!!.inputType = InputType.TYPE_CLASS_NUMBER
-
             accountInstructions.text = "Welcome back ${user.email}!"
 
             loginBt!!.text = "My Surveys"
@@ -99,7 +97,6 @@ class MainActivity : AppCompatActivity() {
             startBt = findViewById<Button>(R.id.start)
             code = findViewById<EditText>(R.id.code)
 
-            //code!!.inputType = InputType.TYPE_CLASS_NUMBER
 
             loginBt!!.setOnClickListener {
                 val intent = Intent(this, Login::class.java)
@@ -115,7 +112,7 @@ class MainActivity : AppCompatActivity() {
                     .addOnSuccessListener { documents ->
                         var found = false
                         for (document in documents) {
-                            if (document.id == code!!.text.toString()) {
+                            if (document["code"] == code!!.text.toString()) {
                                 found = true
                                 //start intent to do survey
                                 //this means a survey was found corresponding to the code
