@@ -13,7 +13,9 @@ import android.widget.Toast
 import androidx.core.text.isDigitsOnly
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.ktx.getField
 import com.google.firebase.ktx.Firebase
+import java.util.ArrayList
 
 class MainActivity : AppCompatActivity() {
 
@@ -39,7 +41,7 @@ class MainActivity : AppCompatActivity() {
             code = findViewById<EditText>(R.id.code)
             accountInstructions = findViewById(R.id.accountInstructions)
 
-            code!!.inputType = InputType.TYPE_CLASS_NUMBER
+            //code!!.inputType = InputType.TYPE_CLASS_NUMBER
 
             accountInstructions.text = "Welcome back ${user.email}!"
 
@@ -62,6 +64,8 @@ class MainActivity : AppCompatActivity() {
                 db.collection("surveys")
                     .get()
                     .addOnSuccessListener { documents ->
+
+
                         var found = false
                         for (document in documents) {
                             if (document.id == code!!.text.toString()) {
@@ -69,15 +73,21 @@ class MainActivity : AppCompatActivity() {
                                 //start intent to do survey
                                 //this means a survey was found corresponding to the code
                                 //just need to add it as an extra to the intent and start an activity that involves completing the survey
-                                val intent = Intent(this,Survey::class.java)
-                                val lst =  document.data.get("question") as Array<String>
-                                intent.putExtra("questions", lst)
+                                val intent = Intent(this, Survey::class.java)
+                                val lst =  document.get("questions")
+                                intent.putStringArrayListExtra("questions",
+                                    lst as ArrayList<String>?
+                                )
                                 startActivity(intent)
                             }
                         }
                         if (!found) {
                             Toast.makeText(this, "Invalid code", Toast.LENGTH_LONG).show()
+                        }else {
+                            Toast.makeText(this, "Survey code", Toast.LENGTH_LONG).show()
                         }
+
+
                     }
                     .addOnFailureListener { exception ->
                         Toast.makeText(this, "Invalid code", Toast.LENGTH_LONG).show()
@@ -89,7 +99,7 @@ class MainActivity : AppCompatActivity() {
             startBt = findViewById<Button>(R.id.start)
             code = findViewById<EditText>(R.id.code)
 
-            code!!.inputType = InputType.TYPE_CLASS_NUMBER
+            //code!!.inputType = InputType.TYPE_CLASS_NUMBER
 
             loginBt!!.setOnClickListener {
                 val intent = Intent(this, Login::class.java)
@@ -110,10 +120,19 @@ class MainActivity : AppCompatActivity() {
                                 //start intent to do survey
                                 //this means a survey was found corresponding to the code
                                 //just need to add it as an extra to the intent and start an activity that involves completing the survey
+                                val intent = Intent(this, Survey::class.java)
+                                val lst =  document.get("questions")
+                                intent.putStringArrayListExtra("questions",
+                                    lst as ArrayList<String>?
+                                )
+                                startActivity(intent)
                             }
                         }
                         if (!found) {
                             Toast.makeText(this, "Invalid code", Toast.LENGTH_LONG).show()
+                        }
+                        else {
+                            Toast.makeText(this, "Survey code", Toast.LENGTH_LONG).show()
                         }
                     }
                     .addOnFailureListener { exception ->
