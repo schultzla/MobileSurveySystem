@@ -68,7 +68,7 @@ class MainActivity : AppCompatActivity() {
 
                         var found = false
                         for (document in documents) {
-                            if (document.id == code!!.text.toString()) {
+                            if (document["code"] == code!!.text.toString()) {
                                 found = true
                                 //start intent to do survey
                                 //this means a survey was found corresponding to the code

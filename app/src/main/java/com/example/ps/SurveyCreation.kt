@@ -17,6 +17,7 @@ class SurveyCreation : AppCompatActivity() {
 
     private lateinit var createBtn: Button
     private lateinit var questionText: EditText
+    private lateinit var surveyTitle: EditText
     private val db = Firebase.firestore
     private var mAuth: FirebaseAuth? = null
 
@@ -27,24 +28,52 @@ class SurveyCreation : AppCompatActivity() {
 
         createBtn = findViewById(R.id.createBtn)
         questionText = findViewById(R.id.editSurveyQuestions)
+        surveyTitle = findViewById(R.id.surveyTitle)
 
         createBtn.setOnClickListener{
             var questions = questionText.text.split("\n")
-            if (questions.isEmpty()) {
+            if (questions.isEmpty() || surveyTitle.text.isBlank()) {
                 Toast.makeText(this, "Surveys need at least 1 question!", Toast.LENGTH_LONG).show()
             } else {
-                val survey = hashMapOf(
-                    "questions" to questions,
-                    "user" to db.document("users/" + mAuth!!.currentUser?.email)
-                )
+                if (surveyTitle.text.matches(Regex("/^\\S*\$/"))) {
+                    Toast.makeText(this, "Codes can't have any spaces!", Toast.LENGTH_LONG).show()
+                } else {
 
-                db.collection("surveys")
-                    .add(survey)
+                    db.collection("surveys")
+                        .get()
+                        .addOnSuccessListener { documents ->
 
 
-                val intent = Intent(this, SurveyDashboard::class.java)
-                setResult(Activity.RESULT_OK, intent)
-                finish()
+                            var found = false
+                            for (document in documents) {
+                                if (document["code"] == surveyTitle.text.toString()) {
+                                    found = true
+                                    Toast.makeText(
+                                        this,
+                                        "This code has already been used! Please try another",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
+                            }
+
+                            if (!found) {
+                                val survey = hashMapOf(
+                                    "questions" to questions,
+                                    "code" to surveyTitle.text.toString(),
+                                    "user" to db.document("users/" + mAuth!!.currentUser?.email)
+                                )
+
+                                db.collection("surveys")
+                                    .add(survey)
+
+
+                                val intent = Intent(this, SurveyDashboard::class.java)
+                                setResult(Activity.RESULT_OK, intent)
+                                finish()
+                            }
+                        }
+
+                }
             }
         }
     }
