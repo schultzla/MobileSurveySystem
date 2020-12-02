@@ -32,7 +32,7 @@ class QuestionList(private val context: Activity, private var Questions: List<St
 
 
         val question = Questions[position]
-        textViewName.text = question
+        textViewName.text = "/ " + question + " /"
 
         return listViewItem
     }
