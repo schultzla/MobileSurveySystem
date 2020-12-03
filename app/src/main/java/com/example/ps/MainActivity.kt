@@ -76,6 +76,7 @@ class MainActivity : AppCompatActivity() {
                                 intent.putStringArrayListExtra("questions",
                                     lst as ArrayList<String>?
                                 )
+                                intent.putExtra("codes", code!!.text.toString())
                                 startActivity(intent)
                             }
                         }
