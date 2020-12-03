@@ -1,6 +1,7 @@
 package com.example.ps
 
 
+import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -19,6 +20,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import java.util.ArrayList
 
 class Survey : AppCompatActivity() {
 
@@ -45,32 +47,55 @@ class Survey : AppCompatActivity() {
 
         submitbutton.setOnClickListener {
             var i = 0
-            var j: String = ""
+            var answers = arrayListOf<Int>()
+
             try {
                 while (i < question.size) {
                     if(listViewQuestions.getItemAtPosition(i) == "Empty"){
                         throw Exception("Missing Selection")
                     }
-                    j = (j).plus(" ").plus("Q").plus(i + 1).plus(":").plus(listViewQuestions.getItemAtPosition(i++))
+                    val temp = listViewQuestions.getItemAtPosition(i++) as String
+                    answers.add(temp.toInt())
                 }
-                var lstanswers = j.toString()
-                var newfieldanswer = hashMapOf(
-                    "answers" to lstanswers
-                )
+
                 db.collection("surveys")
                     .get()
                     .addOnSuccessListener { documents ->
 
                         for (document in documents) {
                             if (document["code"] == codes) {
-                                db.collection("surveys").document(document.id)
-                                    .set(newfieldanswer, SetOptions.merge())
+                                val lst = document.get("questions") as ArrayList<*>
+
+                                var i = 0
+                                val questionList = ArrayList<Question>()
+
+                                for (q in lst) {
+                                    val temp = q as HashMap<*, *>
+                                    val tempRating = temp["rating"] as HashMap<String, Long>
+                                    val rating = Rating(tempRating["rating"]!!.toInt(), tempRating["ratingCount"]!!.toInt())
+
+                                    var largeRating = rating.rating * rating.ratingCount
+                                    largeRating += answers[i]
+
+                                    rating.ratingCount = rating.ratingCount + 1
+                                    rating.rating = largeRating / rating.ratingCount
+
+                                    val tempQ = Question(temp["question"] as String, rating)
+                                    questionList.add(tempQ)
+
+                                    i += 1
+                                }
+
+                                val newData = hashMapOf("questions" to questionList)
+                                db.collection("surveys").document(document.id).set(newData, SetOptions.merge())
                             }
                         }
                     }
 
-                Toast.makeText(this,j,Toast.LENGTH_LONG).show()
-            }catch (e: Exception){
+                val intent = Intent(this, MainActivity::class.java)
+                setResult(Activity.RESULT_OK, intent)
+                finish()
+            } catch (e: Exception){
                 Toast.makeText(this,"Missing Selection",Toast.LENGTH_LONG).show()
             }
 

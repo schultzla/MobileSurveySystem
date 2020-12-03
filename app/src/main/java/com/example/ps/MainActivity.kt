@@ -72,18 +72,23 @@ class MainActivity : AppCompatActivity() {
                                 //this means a survey was found corresponding to the code
                                 //just need to add it as an extra to the intent and start an activity that involves completing the survey
                                 val intent = Intent(this, Survey::class.java)
-                                val lst =  document.get("questions")
+                                val lst = document.get("questions") as ArrayList<*>
+                                val questionLst = arrayListOf<String>()
+
+                                for (q in lst) {
+                                    val temp = q as HashMap<*, *>
+                                    questionLst.add(temp["question"] as String)
+                                }
+
                                 intent.putStringArrayListExtra("questions",
-                                    lst as ArrayList<String>?
+                                    questionLst as ArrayList<String>?
                                 )
                                 intent.putExtra("codes", code!!.text.toString())
-                                startActivity(intent)
+                                startActivityForResult(intent, ANSWER_SURVEY_REQUEST)
                             }
                         }
                         if (!found) {
                             Toast.makeText(this, "Invalid code", Toast.LENGTH_LONG).show()
-                        }else {
-                            Toast.makeText(this, "Survey code", Toast.LENGTH_LONG).show()
                         }
 
 
@@ -119,18 +124,23 @@ class MainActivity : AppCompatActivity() {
                                 //this means a survey was found corresponding to the code
                                 //just need to add it as an extra to the intent and start an activity that involves completing the survey
                                 val intent = Intent(this, Survey::class.java)
-                                val lst =  document.get("questions")
+                                val lst = document.get("questions") as ArrayList<*>
+                                val questionLst = arrayListOf<String>()
+
+                                for (q in lst) {
+                                    val temp = q as HashMap<*, *>
+                                    questionLst.add(temp["question"] as String)
+                                }
+
                                 intent.putStringArrayListExtra("questions",
-                                    lst as ArrayList<String>?
+                                    questionLst as ArrayList<String>?
                                 )
-                                startActivity(intent)
+                                intent.putExtra("codes", code!!.text.toString())
+                                startActivityForResult(intent, ANSWER_SURVEY_REQUEST)
                             }
                         }
                         if (!found) {
                             Toast.makeText(this, "Invalid code", Toast.LENGTH_LONG).show()
-                        }
-                        else {
-                            Toast.makeText(this, "Survey code", Toast.LENGTH_LONG).show()
                         }
                     }
                     .addOnFailureListener { exception ->
@@ -138,5 +148,18 @@ class MainActivity : AppCompatActivity() {
                     }
             }
         }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == ANSWER_SURVEY_REQUEST && resultCode == RESULT_OK) {
+            Toast.makeText(this, "Submission recorded!", Toast.LENGTH_LONG).show()
+        }
+
+    }
+
+    companion object {
+
+        private val ANSWER_SURVEY_REQUEST = 0
     }
 }

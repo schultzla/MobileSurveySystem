@@ -57,8 +57,24 @@ class SurveyCreation : AppCompatActivity() {
                             }
 
                             if (!found) {
+                                /*
+                                    questions:
+                                        question: {
+                                            val: "blah"
+                                            rating: 1
+                                            ratings: 10
+                                           }
+
+                                 */
+                                val questionList = ArrayList<Question>()
+                                for (question in questions) {
+                                    val temp = Rating(5, 1)
+                                    val tempQ = Question(question, temp)
+                                    questionList.add(tempQ)
+                                }
+
                                 val survey = hashMapOf(
-                                    "questions" to questions,
+                                    "questions" to questionList,
                                     "code" to surveyTitle.text.toString(),
                                     "user" to db.document("users/" + mAuth!!.currentUser?.email)
                                 )
@@ -77,4 +93,14 @@ class SurveyCreation : AppCompatActivity() {
             }
         }
     }
+}
+
+class Rating(rating: Int, ratingCount: Int) {
+    var rating: Int = rating
+    var ratingCount: Int = ratingCount
+}
+
+class Question(question: String, rating: Rating) {
+    var question: String = question
+    var rating: Rating = rating
 }
