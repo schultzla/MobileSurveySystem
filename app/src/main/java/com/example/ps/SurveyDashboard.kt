@@ -18,8 +18,8 @@ class SurveyDashboard : AppCompatActivity() {
     private lateinit var createBtn: Button
     private lateinit var listViewSurvey: ListView
     private val db = Firebase.firestore
-    private var code = ArrayList<String>()
-
+    private lateinit var surveyListAdapter: DashboardList
+    private lateinit var codeList: MutableList<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,17 +27,14 @@ class SurveyDashboard : AppCompatActivity() {
 
         createBtn = findViewById(R.id.createSurvey)
         listViewSurvey = findViewById<View>(R.id.listViewSurvey) as ListView
-        var codeList: MutableList<String>
 
-        if (intent.getStringArrayListExtra("codeList").isNullOrEmpty()) {
-            code = arrayListOf()
-            codeList = mutableListOf()
+        codeList = if (intent.getStringArrayListExtra("codeList").isNullOrEmpty()) {
+            mutableListOf()
         } else {
-            code = intent.getStringArrayListExtra("codeList")!!
-            codeList = code.toList() as MutableList
+            intent.getStringArrayListExtra("codeList")!!.toMutableList()
         }
 
-        val surveyListAdapter = DashboardList(this, codeList)
+        surveyListAdapter = DashboardList(this, codeList)
         listViewSurvey.adapter = surveyListAdapter
 
         listViewSurvey.setOnItemClickListener { adapterView, view, i, l ->
@@ -45,7 +42,7 @@ class SurveyDashboard : AppCompatActivity() {
                 .get()
                 .addOnSuccessListener { documents ->
                     for(document in documents){
-                        if(document["code"] == code[i]){
+                        if(document["code"] == codeList[i]){
                             val questions = document["questions"] as ArrayList<*>
                             val map1 = questions[0] as HashMap<*,*>
                             val map2 = map1["rating"] as HashMap<*,*>
@@ -69,13 +66,13 @@ class SurveyDashboard : AppCompatActivity() {
                         .get()
                         .addOnSuccessListener { documents ->
                             for (document in documents) {
-                                if (document["code"] == code[position]) {
+                                if (document["code"] == codeList[position]) {
                                     db.collection("surveys").document(document.id).delete()
-                                    codeList.removeAt(position)
-                                    surveyListAdapter.notifyDataSetChanged()
-                                }
-                                if (code.isEmpty()) {
-                                    break
+                                        .addOnSuccessListener {
+                                            codeList.removeAt(position)
+                                            surveyListAdapter.notifyDataSetChanged()
+                                        }
+
                                 }
                             }
                         }
@@ -103,16 +100,15 @@ class SurveyDashboard : AppCompatActivity() {
                 db.collection("surveys")
                     .get()
                     .addOnSuccessListener { documents ->
-                        val codeList = java.util.ArrayList<String>()
+                        codeList.clear()
                         val user = intent.extras?.get("user") as FirebaseUser
                         for (document in documents) {
                             if (document["user"] == user.email){
                                 codeList.add(document["code"].toString())
                             }
                         }
-                        code = codeList
-                        val surveyListAdapter = DashboardList(this, codeList)
-                        listViewSurvey.adapter = surveyListAdapter
+                        Log.i("MobileSurvey", codeList.toString())
+                        surveyListAdapter.notifyDataSetChanged()
                     }
             }
 
