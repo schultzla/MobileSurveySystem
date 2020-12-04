@@ -27,10 +27,16 @@ class SurveyDashboard : AppCompatActivity() {
 
         createBtn = findViewById(R.id.createSurvey)
         listViewSurvey = findViewById<View>(R.id.listViewSurvey) as ListView
+        var codeList: MutableList<String>
 
-        code = intent.getStringArrayListExtra("codeList")!!
-        code.add(0, "Create your survey by button below")
-        var codeList = code.toList() as MutableList
+        if (intent.getStringArrayListExtra("codeList").isNullOrEmpty()) {
+            code = arrayListOf()
+            codeList = mutableListOf()
+        } else {
+            code = intent.getStringArrayListExtra("codeList")!!
+            codeList = code.toList() as MutableList
+        }
+
         val surveyListAdapter = DashboardList(this, codeList)
         listViewSurvey.adapter = surveyListAdapter
 
@@ -94,6 +100,20 @@ class SurveyDashboard : AppCompatActivity() {
             super.onActivityResult(requestCode, resultCode, data)
             if (requestCode == CREATE_SURVEY_REQUEST && resultCode == RESULT_OK) {
                 Toast.makeText(this, "Created survey!", Toast.LENGTH_LONG).show()
+                db.collection("surveys")
+                    .get()
+                    .addOnSuccessListener { documents ->
+                        val codeList = java.util.ArrayList<String>()
+                        val user = intent.extras?.get("user") as FirebaseUser
+                        for (document in documents) {
+                            if (document["user"] == user.email){
+                                codeList.add(document["code"].toString())
+                            }
+                        }
+                        code = codeList
+                        val surveyListAdapter = DashboardList(this, codeList)
+                        listViewSurvey.adapter = surveyListAdapter
+                    }
             }
 
         }
