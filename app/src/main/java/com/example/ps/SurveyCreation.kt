@@ -32,13 +32,17 @@ class SurveyCreation : AppCompatActivity() {
 
         createBtn.setOnClickListener{
             var questions = questionText.text.split("\n")
-            if (questions.isEmpty() || surveyTitle.text.isBlank()) {
-                Toast.makeText(this, "Surveys need at least 1 question!", Toast.LENGTH_LONG).show()
-            } else {
-                if (surveyTitle.text.matches(Regex("/^\\S*\$/"))) {
+            when {
+                questionText.length() == 0 -> {
+                    Toast.makeText(this, "Surveys need at least 1 question!", Toast.LENGTH_LONG).show()
+                }
+                surveyTitle.text.isBlank() -> {
+                    Toast.makeText(this, "Please enter a survey code!", Toast.LENGTH_LONG).show()
+                }
+                !surveyTitle.text.matches(Regex("^\\S+$")) -> {
                     Toast.makeText(this, "Codes can't have any spaces!", Toast.LENGTH_LONG).show()
-                } else {
-
+                }
+                else -> {
                     db.collection("surveys")
                         .get()
                         .addOnSuccessListener { documents ->
@@ -58,14 +62,14 @@ class SurveyCreation : AppCompatActivity() {
 
                             if (!found) {
                                 /*
-                                    questions:
-                                        question: {
-                                            val: "blah"
-                                            rating: 1
-                                            ratings: 10
-                                           }
+                                        questions:
+                                            question: {
+                                                val: "blah"
+                                                rating: 1
+                                                ratings: 10
+                                               }
 
-                                 */
+                                     */
                                 val questionList = ArrayList<Question>()
                                 for (question in questions) {
                                     val temp = Rating(5, 1)
@@ -90,7 +94,6 @@ class SurveyCreation : AppCompatActivity() {
                                 startActivity(intent)
                             }
                         }
-
                 }
             }
         }

@@ -33,12 +33,16 @@
         android:id="@+id/login_user"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:backgroundTint="@color/colorPrimary"
         android:text="Login" />
 
     <ProgressBar
         android:id="@+id/progressBar_login"
         style="?android:attr/progressBarStyle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        android:backgroundTint="#00191BA9"
+        android:progressTint="#FFFFFF" />
 </LinearLayout>
 

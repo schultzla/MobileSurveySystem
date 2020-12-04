@@ -4,19 +4,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFFFFF"
     tools:context=".SurveyCreation">
 
     <EditText
         android:id="@+id/editSurveyQuestions"
-        android:layout_width="371dp"
-        android:layout_height="154dp"
+        android:layout_width="370dp"
+        android:layout_height="156dp"
         android:layout_marginTop="52dp"
+        android:backgroundTint="@color/colorPrimary"
         android:ems="10"
         android:gravity="start|top"
         android:hint="Questions"
         android:inputType="textMultiLine"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.612"
+        app:layout_constraintHorizontal_bias="0.487"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -26,12 +28,13 @@
         android:layout_height="48dp"
         android:layout_marginTop="35dp"
         android:layout_marginBottom="76dp"
+        android:backgroundTint="@color/colorPrimary"
         android:text="Create"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/surveyTitle"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.067" />
 
     <TextView
         android:id="@+id/textView"
@@ -41,16 +44,17 @@
         android:textAlignment="center"
         app:layout_constraintBottom_toTopOf="@+id/editSurveyQuestions"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.589"
+        app:layout_constraintHorizontal_bias="0.487"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.953" />
+        app:layout_constraintVertical_bias="1.0" />
 
     <EditText
         android:id="@+id/surveyTitle"
         android:layout_width="370dp"
         android:layout_height="40dp"
         android:layout_marginTop="15dp"
+        android:backgroundTint="@color/colorPrimary"
         android:ems="10"
         android:hint="Survey title (this will be the code users enter)"
         android:inputType="textPersonName"
@@ -58,5 +62,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editSurveyQuestions" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="362dp"
+        android:layout_height="28dp"
+        android:text="Questions are answered on a scale of 1-5!"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toTopOf="@+id/createBtn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/surveyTitle" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
