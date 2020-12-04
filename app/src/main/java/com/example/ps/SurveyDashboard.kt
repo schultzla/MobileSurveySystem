@@ -19,8 +19,6 @@ class SurveyDashboard : AppCompatActivity() {
     private lateinit var listViewSurvey: ListView
     private val db = Firebase.firestore
     private var code = ArrayList<String>()
-    private lateinit var text: String
-    private lateinit var text2: String
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,6 +33,26 @@ class SurveyDashboard : AppCompatActivity() {
         var codeList = code.toList() as MutableList
         val surveyListAdapter = DashboardList(this, codeList)
         listViewSurvey.adapter = surveyListAdapter
+
+        listViewSurvey.setOnItemClickListener { adapterView, view, i, l ->
+            db.collection("surveys")
+                .get()
+                .addOnSuccessListener { documents ->
+                    for(document in documents){
+                        if(document["code"] == code[i]){
+                            val questions = document["questions"] as ArrayList<*>
+                            val map1 = questions[0] as HashMap<*,*>
+                            val map2 = map1["rating"] as HashMap<*,*>
+                            val rating = map2["rating"].toString()
+                            val count = map2["ratingCount"].toString()
+                            val dialogBuilder = AlertDialog.Builder(this)
+                            dialogBuilder.setMessage("Average rating: $rating\nTotal count: $count")
+                            val alert = dialogBuilder.create()
+                            alert.show()
+                        }
+                    }
+                }
+        }
 
         listViewSurvey.setOnItemLongClickListener { parent, view, position, id ->
             val dialogBuilder = AlertDialog.Builder(this)
