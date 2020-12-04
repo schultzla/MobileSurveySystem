@@ -1,24 +1,62 @@
 package com.example.ps
 
 import android.app.ListActivity
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
-import android.widget.TextView
-import android.widget.Toast
+import android.view.View
+import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 class SurveyDashboard  : AppCompatActivity() {
 
     private lateinit var createBtn: Button
+    private lateinit var listViewSurvey: ListView
+    private val db = Firebase.firestore
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.survey_dashboard)
 
         createBtn = findViewById(R.id.createSurvey)
+        listViewSurvey = findViewById<View>(R.id.listViewSurvey) as ListView
+
+        var code = intent.getStringArrayListExtra("codeList")!!.toList() as MutableList
+        val surveyListAdapter = DashboardList(this, code)
+        listViewSurvey.adapter = surveyListAdapter
+
+        listViewSurvey.setOnItemLongClickListener { parent, view, position, id ->
+            val dialogBuilder = AlertDialog.Builder(this)
+            dialogBuilder.setMessage("Do you want to delete this survey?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", DialogInterface.OnClickListener {
+                        dialog, id ->
+                    db.collection("surveys")
+                        .get()
+                        .addOnSuccessListener { documents ->
+                            for(document in documents){
+                                if(document["code"] == code[position]){
+                                    db.collection("surveys").document(document.id).delete()
+                                    code.removeAt(position)
+                                    surveyListAdapter.notifyDataSetChanged()
+                                }
+                            }
+                        }
+                })
+                .setNegativeButton("No", DialogInterface.OnClickListener {
+                        dialog, id -> dialog.cancel()
+                })
+            val alert = dialogBuilder.create()
+            alert.show()
+            return@setOnItemLongClickListener true
+        }
+
 
         createBtn.setOnClickListener{
             startActivityForResult(Intent(this, SurveyCreation::class.java), CREATE_SURVEY_REQUEST)

@@ -14,7 +14,9 @@ import androidx.core.text.isDigitsOnly
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.getField
+import com.google.firebase.firestore.local.ReferenceSet
 import com.google.firebase.ktx.Firebase
+import java.lang.ref.Reference
 import java.util.ArrayList
 
 class MainActivity : AppCompatActivity() {
@@ -22,7 +24,7 @@ class MainActivity : AppCompatActivity() {
     private var loginBt: Button? = null
     private var registerBt: Button? = null
     private var startBt: Button? = null
-    private var code:EditText? = null
+    private var code: EditText? = null
     private val db = Firebase.firestore
     private var mAuth: FirebaseAuth? = null
     private lateinit var accountInstructions: TextView
@@ -46,16 +48,27 @@ class MainActivity : AppCompatActivity() {
             loginBt!!.text = "My Surveys"
             registerBt!!.text = "Sign Out"
 
-            registerBt!!.setOnClickListener{
+            registerBt!!.setOnClickListener {
                 mAuth!!.signOut()
                 finish()
                 startActivity(intent)
             }
 
-            loginBt!!.setOnClickListener{
-                val intent = Intent(this, SurveyDashboard::class.java)
-                intent.putExtra("user", mAuth!!.currentUser)
-                startActivity(intent)
+            loginBt!!.setOnClickListener {
+                db.collection("surveys")
+                    .get()
+                    .addOnSuccessListener { documents ->
+                        val codeList = ArrayList<String>()
+                        for (document in documents) {
+                            if (document["user"] == user.email){
+                                codeList.add(document["code"].toString())
+                            }
+                        }
+                        val intent = Intent(this, SurveyDashboard::class.java)
+                        intent.putExtra("user", mAuth!!.currentUser)
+                        intent.putStringArrayListExtra("codeList", codeList)
+                        startActivity(intent)
+                    }
             }
 
             startBt!!.setOnClickListener {
@@ -80,7 +93,8 @@ class MainActivity : AppCompatActivity() {
                                     questionLst.add(temp["question"] as String)
                                 }
 
-                                intent.putStringArrayListExtra("questions",
+                                intent.putStringArrayListExtra(
+                                    "questions",
                                     questionLst as ArrayList<String>?
                                 )
                                 intent.putExtra("codes", code!!.text.toString())
@@ -132,7 +146,8 @@ class MainActivity : AppCompatActivity() {
                                     questionLst.add(temp["question"] as String)
                                 }
 
-                                intent.putStringArrayListExtra("questions",
+                                intent.putStringArrayListExtra(
+                                    "questions",
                                     questionLst as ArrayList<String>?
                                 )
                                 intent.putExtra("codes", code!!.text.toString())

@@ -76,16 +76,18 @@ class SurveyCreation : AppCompatActivity() {
                                 val survey = hashMapOf(
                                     "questions" to questionList,
                                     "code" to surveyTitle.text.toString(),
-                                    "user" to db.document("users/" + mAuth!!.currentUser?.email)
+                                    //"user" to db.document("users/" + mAuth!!.currentUser?.email)
+                                    "user" to mAuth!!.currentUser?.email.toString()
                                 )
 
                                 db.collection("surveys")
                                     .add(survey)
 
 
-                                val intent = Intent(this, SurveyDashboard::class.java)
-                                setResult(Activity.RESULT_OK, intent)
-                                finish()
+                                val intent = Intent(this, MainActivity::class.java)
+                                //setResult(Activity.RESULT_OK, intent)
+                                //finish()
+                                startActivity(intent)
                             }
                         }
 
