@@ -13,11 +13,14 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
-class SurveyDashboard  : AppCompatActivity() {
+class SurveyDashboard : AppCompatActivity() {
 
     private lateinit var createBtn: Button
     private lateinit var listViewSurvey: ListView
     private val db = Firebase.firestore
+    private var code = ArrayList<String>()
+    private lateinit var text: String
+    private lateinit var text2: String
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,30 +30,34 @@ class SurveyDashboard  : AppCompatActivity() {
         createBtn = findViewById(R.id.createSurvey)
         listViewSurvey = findViewById<View>(R.id.listViewSurvey) as ListView
 
-        var code = intent.getStringArrayListExtra("codeList")!!.toList() as MutableList
-        val surveyListAdapter = DashboardList(this, code)
+        code = intent.getStringArrayListExtra("codeList")!!
+        code.add(0, "Create your survey by button below")
+        var codeList = code.toList() as MutableList
+        val surveyListAdapter = DashboardList(this, codeList)
         listViewSurvey.adapter = surveyListAdapter
 
         listViewSurvey.setOnItemLongClickListener { parent, view, position, id ->
             val dialogBuilder = AlertDialog.Builder(this)
             dialogBuilder.setMessage("Do you want to delete this survey?")
                 .setCancelable(false)
-                .setPositiveButton("Yes", DialogInterface.OnClickListener {
-                        dialog, id ->
+                .setPositiveButton("Yes", DialogInterface.OnClickListener { dialog, id ->
                     db.collection("surveys")
                         .get()
                         .addOnSuccessListener { documents ->
-                            for(document in documents){
-                                if(document["code"] == code[position]){
+                            for (document in documents) {
+                                if (document["code"] == code[position]) {
                                     db.collection("surveys").document(document.id).delete()
-                                    code.removeAt(position)
+                                    codeList.removeAt(position)
                                     surveyListAdapter.notifyDataSetChanged()
+                                }
+                                if (code.isEmpty()) {
+                                    break
                                 }
                             }
                         }
                 })
-                .setNegativeButton("No", DialogInterface.OnClickListener {
-                        dialog, id -> dialog.cancel()
+                .setNegativeButton("No", DialogInterface.OnClickListener { dialog, id ->
+                    dialog.cancel()
                 })
             val alert = dialogBuilder.create()
             alert.show()
@@ -61,20 +68,21 @@ class SurveyDashboard  : AppCompatActivity() {
         createBtn.setOnClickListener{
             startActivityForResult(Intent(this, SurveyCreation::class.java), CREATE_SURVEY_REQUEST)
         }
-
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == CREATE_SURVEY_REQUEST && resultCode == RESULT_OK) {
-            Toast.makeText(this, "Created survey!", Toast.LENGTH_LONG).show()
+
+
+        override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+            super.onActivityResult(requestCode, resultCode, data)
+            if (requestCode == CREATE_SURVEY_REQUEST && resultCode == RESULT_OK) {
+                Toast.makeText(this, "Created survey!", Toast.LENGTH_LONG).show()
+            }
+
         }
 
+
+        companion object {
+
+            private val CREATE_SURVEY_REQUEST = 0
+        }
     }
-
-
-    companion object {
-
-        private val CREATE_SURVEY_REQUEST = 0
-    }
-}
