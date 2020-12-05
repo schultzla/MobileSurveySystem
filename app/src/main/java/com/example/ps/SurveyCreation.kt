@@ -89,9 +89,8 @@ class SurveyCreation : AppCompatActivity() {
 
 
                                 val intent = Intent(this, MainActivity::class.java)
-                                //setResult(Activity.RESULT_OK, intent)
-                                //finish()
-                                startActivity(intent)
+                                setResult(Activity.RESULT_OK, intent)
+                                finish()
                             }
                         }
                 }

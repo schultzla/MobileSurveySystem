@@ -18,8 +18,8 @@ class SurveyDashboard : AppCompatActivity() {
     private lateinit var createBtn: Button
     private lateinit var listViewSurvey: ListView
     private val db = Firebase.firestore
-    private var code = ArrayList<String>()
-
+    private lateinit var surveyListAdapter: DashboardList
+    private lateinit var codeList: MutableList<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,10 +28,13 @@ class SurveyDashboard : AppCompatActivity() {
         createBtn = findViewById(R.id.createSurvey)
         listViewSurvey = findViewById<View>(R.id.listViewSurvey) as ListView
 
-        code = intent.getStringArrayListExtra("codeList")!!
-        code.add(0, "Create your survey by button below")
-        var codeList = code.toList() as MutableList
-        val surveyListAdapter = DashboardList(this, codeList)
+        codeList = if (intent.getStringArrayListExtra("codeList").isNullOrEmpty()) {
+            mutableListOf()
+        } else {
+            intent.getStringArrayListExtra("codeList")!!.toMutableList()
+        }
+
+        surveyListAdapter = DashboardList(this, codeList)
         listViewSurvey.adapter = surveyListAdapter
 
         listViewSurvey.setOnItemClickListener { adapterView, view, i, l ->
@@ -39,7 +42,7 @@ class SurveyDashboard : AppCompatActivity() {
                 .get()
                 .addOnSuccessListener { documents ->
                     for(document in documents){
-                        if(document["code"] == code[i]){
+                        if(document["code"] == codeList[i]){
                             val questions = document["questions"] as ArrayList<*>
                             val text = questions.toString()
                             val sub = text.replace("}", "")
@@ -67,13 +70,13 @@ class SurveyDashboard : AppCompatActivity() {
                         .get()
                         .addOnSuccessListener { documents ->
                             for (document in documents) {
-                                if (document["code"] == code[position]) {
+                                if (document["code"] == codeList[position]) {
                                     db.collection("surveys").document(document.id).delete()
-                                    codeList.removeAt(position)
-                                    surveyListAdapter.notifyDataSetChanged()
-                                }
-                                if (code.isEmpty()) {
-                                    break
+                                        .addOnSuccessListener {
+                                            codeList.removeAt(position)
+                                            surveyListAdapter.notifyDataSetChanged()
+                                        }
+
                                 }
                             }
                         }
@@ -98,6 +101,19 @@ class SurveyDashboard : AppCompatActivity() {
             super.onActivityResult(requestCode, resultCode, data)
             if (requestCode == CREATE_SURVEY_REQUEST && resultCode == RESULT_OK) {
                 Toast.makeText(this, "Created survey!", Toast.LENGTH_LONG).show()
+                db.collection("surveys")
+                    .get()
+                    .addOnSuccessListener { documents ->
+                        codeList.clear()
+                        val user = intent.extras?.get("user") as FirebaseUser
+                        for (document in documents) {
+                            if (document["user"] == user.email){
+                                codeList.add(document["code"].toString())
+                            }
+                        }
+                        Log.i("MobileSurvey", codeList.toString())
+                        surveyListAdapter.notifyDataSetChanged()
+                    }
             }
 
         }

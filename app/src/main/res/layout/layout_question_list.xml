@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-    <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        tools:context="com.example.ps.Survey">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:backgroundTint="@color/colorPrimary"
+    android:orientation="vertical">
+    tools:context="com.example.ps.Survey">
 
 
     <TextView
@@ -24,30 +24,35 @@
             android:id="@+id/radioButton1"
             android:layout_width="70dp"
             android:layout_height="match_parent"
+            android:buttonTint="@color/colorPrimary"
             android:text="1" />
 
         <RadioButton
             android:id="@+id/radioButton2"
             android:layout_width="70dp"
             android:layout_height="wrap_content"
+            android:buttonTint="@color/colorPrimary"
             android:text="2" />
 
         <RadioButton
             android:id="@+id/radioButton3"
             android:layout_width="70dp"
             android:layout_height="wrap_content"
+            android:buttonTint="@color/colorPrimary"
             android:text="3" />
 
         <RadioButton
             android:id="@+id/radioButton4"
             android:layout_width="70dp"
             android:layout_height="wrap_content"
+            android:buttonTint="@color/colorPrimary"
             android:text="4" />
 
         <RadioButton
             android:id="@+id/radioButton5"
             android:layout_width="70dp"
             android:layout_height="wrap_content"
+            android:buttonTint="@color/colorPrimary"
             android:text="5" />
     </RadioGroup>
 
@@ -55,6 +60,6 @@
         android:id="@+id/textView3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text=" not at all                                                                    alot" />
+        android:text=" not at all                                                                    a lot" />
 
 </LinearLayout>
