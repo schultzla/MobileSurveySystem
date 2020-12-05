@@ -41,12 +41,16 @@ class SurveyDashboard : AppCompatActivity() {
                     for(document in documents){
                         if(document["code"] == code[i]){
                             val questions = document["questions"] as ArrayList<*>
-                            val map1 = questions[0] as HashMap<*,*>
-                            val map2 = map1["rating"] as HashMap<*,*>
-                            val rating = map2["rating"].toString()
-                            val count = map2["ratingCount"].toString()
+                            val text = questions.toString()
+                            val sub = text.replace("}", "")
+                            val sub2 = sub.replace("{", "")
+                            val sub3 = sub2.replace("[", "")
+                            val sub4 = sub3.replace("]", "")
+                            val sub5 = sub4.replace("rating=rating=", "rating=")
+                            val sub6 = sub5.replace("=", ": ")
+                            val final = sub6.replace(",", "\n")
                             val dialogBuilder = AlertDialog.Builder(this)
-                            dialogBuilder.setMessage("Average rating: $rating\nTotal count: $count")
+                            dialogBuilder.setMessage(final)
                             val alert = dialogBuilder.create()
                             alert.show()
                         }
