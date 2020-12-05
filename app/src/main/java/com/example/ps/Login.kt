@@ -12,6 +12,9 @@ import android.view.View
 import android.widget.*
 import com.google.firebase.auth.FirebaseAuth
 
+/*
+    Login page
+ */
 class Login : AppCompatActivity() {
     private var loEmail: EditText? = null
     private var loPassword: EditText? = null
@@ -36,6 +39,9 @@ class Login : AppCompatActivity() {
         }
     }
 
+    /*
+        Logs a user in, does some validation to ensure a user has inputted items in the login fields
+     */
     private fun login() {
         bar?.visibility = View.VISIBLE
         val email: String = loEmail?.text.toString()

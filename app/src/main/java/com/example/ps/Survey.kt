@@ -22,6 +22,10 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import java.util.ArrayList
 
+/*
+    Page to take a survey
+ */
+
 class Survey : AppCompatActivity() {
 
     private lateinit var listViewQuestions: ListView
@@ -45,6 +49,9 @@ class Survey : AppCompatActivity() {
         listViewQuestions.adapter = questionListAdapter
         Log.d("TAG","Document found")
 
+        /*
+        On submit, we get all of the answers, check to make sure the user did answer all questions, and then calculate new average rating for each question
+         */
         submitbutton.setOnClickListener {
             var i = 0
             var answers = arrayListOf<Int>()
@@ -63,12 +70,19 @@ class Survey : AppCompatActivity() {
                     .addOnSuccessListener { documents ->
 
                         for (document in documents) {
+                            /*
+                            Found the right survey
+                             */
                             if (document["code"] == codes) {
                                 val lst = document.get("questions") as ArrayList<*>
 
                                 var i = 0
                                 val questionList = ArrayList<Question>()
 
+                                /*
+                                For each question, we keep a rolling average of the current average rating
+                                so here we are just updating this rolling average with the new ratings
+                                 */
                                 for (q in lst) {
                                     val temp = q as HashMap<*, *>
                                     val tempRating = temp["rating"] as HashMap<String, Long>

@@ -23,6 +23,9 @@ class Register : AppCompatActivity() {
     private var bar: ProgressBar? = null
     private val db = Firebase.firestore
 
+    /*
+    Register page
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.register)
@@ -61,6 +64,11 @@ class Register : AppCompatActivity() {
         return true
     }
 
+    /*
+    Register a user, does some validation to ensure the passowrd and email are valid before trying to create an account with firebase
+
+    We also save the user in a database of users since we need to keep track of the user's surveys
+     */
     private fun register() {
         bar!!.visibility = View.VISIBLE
 

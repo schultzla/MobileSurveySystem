@@ -12,6 +12,11 @@ class QuestionList(private val context: Activity, private var Questions: List<St
     override fun getItem(position: Int): String? {
         return answer!![position]
     }
+
+    /*
+        Return the view for the survey questions, each question has a question and then radio buttons to allow
+        answeres on a scale of 1-5
+     */
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val inflater = context.layoutInflater
         val listViewItem = inflater.inflate(R.layout.layout_question_list, null, true)

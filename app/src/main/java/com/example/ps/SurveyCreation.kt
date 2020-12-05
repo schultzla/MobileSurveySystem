@@ -21,6 +21,9 @@ class SurveyCreation : AppCompatActivity() {
     private val db = Firebase.firestore
     private var mAuth: FirebaseAuth? = null
 
+    /*
+    Survey creation page, there's two inputs one for the questions and one for the survey code
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.survey_creation)
@@ -30,6 +33,11 @@ class SurveyCreation : AppCompatActivity() {
         questionText = findViewById(R.id.editSurveyQuestions)
         surveyTitle = findViewById(R.id.surveyTitle)
 
+        /*
+        On create we split the questions text to make an array of questions
+
+        We also check to make sure a survey code was inputted and it doesn't hsave spaces
+         */
         createBtn.setOnClickListener{
             var questions = questionText.text.split("\n")
             when {
@@ -47,7 +55,9 @@ class SurveyCreation : AppCompatActivity() {
                         .get()
                         .addOnSuccessListener { documents ->
 
-
+                            /*
+                            Survey codes need to be unique, since users type them in to access a survey, so we check if this survey code has been used before
+                             */
                             var found = false
                             for (document in documents) {
                                 if (document["code"] == surveyTitle.text.toString()) {
@@ -60,16 +70,10 @@ class SurveyCreation : AppCompatActivity() {
                                 }
                             }
 
+                            /*
+                            If it hasn't been used, we create a question object list
+                             */
                             if (!found) {
-                                /*
-                                        questions:
-                                            question: {
-                                                val: "blah"
-                                                rating: 1
-                                                ratings: 10
-                                               }
-
-                                     */
                                 val questionList = ArrayList<Question>()
                                 for (question in questions) {
                                     val temp = Rating(5, 1)
@@ -80,7 +84,6 @@ class SurveyCreation : AppCompatActivity() {
                                 val survey = hashMapOf(
                                     "questions" to questionList,
                                     "code" to surveyTitle.text.toString(),
-                                    //"user" to db.document("users/" + mAuth!!.currentUser?.email)
                                     "user" to mAuth!!.currentUser?.email.toString()
                                 )
 

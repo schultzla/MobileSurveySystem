@@ -36,6 +36,9 @@ class MainActivity : AppCompatActivity() {
 
         var user = mAuth!!.currentUser
 
+        /*
+            If there is already a user signed in, we change the login and register buttons to the my surveys and sign out buttons
+         */
         if (user != null) {
             loginBt = findViewById<Button>(R.id.login)
             registerBt = findViewById<Button>(R.id.register)
@@ -54,6 +57,9 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
             }
 
+            /*
+                Takes a user to their surveys list
+             */
             loginBt!!.setOnClickListener {
                 db.collection("surveys")
                     .get()
@@ -71,6 +77,9 @@ class MainActivity : AppCompatActivity() {
                     }
             }
 
+            /*
+                Start a survey if the survey exists, if not let the user know the code ins't valid
+             */
             startBt!!.setOnClickListener {
                 db.collection("surveys")
                     .get()
@@ -118,10 +127,17 @@ class MainActivity : AppCompatActivity() {
             code = findViewById<EditText>(R.id.code)
 
 
+            /*
+                Take user to login sscreen
+             */
             loginBt!!.setOnClickListener {
                 val intent = Intent(this, Login::class.java)
                 startActivity(intent)
             }
+
+            /*
+                Take user to register screen
+             */
             registerBt!!.setOnClickListener {
                 val intent = Intent(this, Register::class.java)
                 startActivity(intent)
@@ -165,6 +181,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /*
+        After a user completes a survey, it will return them here and we are checking the result code to see that the survey was completed
+     */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == ANSWER_SURVEY_REQUEST && resultCode == RESULT_OK) {
