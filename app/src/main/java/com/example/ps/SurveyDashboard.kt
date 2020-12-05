@@ -54,6 +54,7 @@ class SurveyDashboard : AppCompatActivity() {
                             val final = sub6.replace(",", "\n")
                             val dialogBuilder = AlertDialog.Builder(this)
                             dialogBuilder.setMessage(final)
+                                .setTitle("Your survey result")
                             val alert = dialogBuilder.create()
                             alert.show()
                         }
