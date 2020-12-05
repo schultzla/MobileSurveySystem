@@ -57,7 +57,7 @@ class Login : AppCompatActivity() {
                 bar?.visibility = View.GONE
                 if(task.isSuccessful){
                     Toast.makeText(applicationContext, "Login successful!", Toast.LENGTH_LONG).show()
-                    val intent = Intent(this, SurveyDashboard::class.java)
+                    val intent = Intent(this, MainActivity::class.java)
                     startActivity(intent)
                 }
                 else{

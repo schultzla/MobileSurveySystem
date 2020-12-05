@@ -28,7 +28,7 @@ class QuestionList(private val context: Activity, private var Questions: List<St
             group,i ->
             val radiobut = listViewItem.findViewById(i) as RadioButton
 
-            answer.set(position, radiobut.text.toString())
+            answer[position] = radiobut.text.toString()
 
         }
 

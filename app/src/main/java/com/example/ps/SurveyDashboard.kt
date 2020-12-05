@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import java.lang.StringBuilder
 
 class SurveyDashboard : AppCompatActivity() {
 
@@ -44,20 +45,27 @@ class SurveyDashboard : AppCompatActivity() {
                     for(document in documents){
                         if(document["code"] == codeList[i]){
                             val questions = document["questions"] as ArrayList<*>
-                            val text = questions.toString()
-                            val sub = text.replace("}", "")
-                            val sub2 = sub.replace("{", "")
-                            val sub3 = sub2.replace("[", "")
-                            val sub4 = sub3.replace("]", "")
-                            val sub5 = sub4.replace("rating=rating=", "rating=")
-                            val sub6 = sub5.replace("=", ": ")
-                            val sub7 = sub6.replace(",", "\n")
-                            val sub8 = sub7.replace("question", "Question")
-                            val sub9 = sub8.replace("rating: ", "Average rating: ")
-                            val sub10 = sub9.replace("ratingCount", "Answer count")
+                            val finalString = StringBuilder()
+                            var timesDone = 0
+
+                            for (q in questions) {
+                                val temp = q as HashMap<*, *>
+                                val tempRating = temp["rating"] as HashMap<String, Long>
+                                val rating = Rating(
+                                    tempRating["rating"]!!.toInt(),
+                                    tempRating["ratingCount"]!!.toInt()
+                                )
+                                finalString.append("Question: ${temp["question"]}\n")
+                                finalString.append("Average Rating: ${rating.rating}\n")
+                                finalString.append("\n")
+                                timesDone = rating.ratingCount
+                            }
+                            finalString.append("Total Survey Responses: $timesDone")
+
+
                             val dialogBuilder = AlertDialog.Builder(this)
-                            dialogBuilder.setMessage(sub10)
-                                .setTitle("Your survey result")
+                            dialogBuilder.setMessage(finalString)
+                                .setTitle("Current Survey Results")
                             val alert = dialogBuilder.create()
                             alert.show()
                         }
@@ -115,7 +123,6 @@ class SurveyDashboard : AppCompatActivity() {
                                 codeList.add(document["code"].toString())
                             }
                         }
-                        Log.i("MobileSurvey", codeList.toString())
                         surveyListAdapter.notifyDataSetChanged()
                     }
             }
